@@ -1,0 +1,307 @@
+currentDeployment: default
+deploymentConfigurations:
+- name: default
+  version: {{ HAL_VERSION }}
+  providers:
+    appengine:
+      enabled: false
+      accounts: []
+      aws:
+        enabled: false
+        accounts: []
+        bakeryDefaults:
+          baseImages: []
+        defaultKeyPairTemplate: 'example-keypair'
+        defaultRegions:
+        - name: us-west-2
+        defaults:
+          iamRole: BaseIAMRole
+    ecs:
+      enabled: false
+      accounts: []
+    azure:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: azure-linux.json
+        baseImages: []
+    dcos:
+      enabled: false
+      accounts: []
+      clusters: []
+    dockerRegistry:
+      enabled: {{ enable_docker_reg }}
+      accounts:
+  {% for items in docker_regs %}
+    - name: "{{ docker_regs[items].name }}"
+        requiredGroupMembership: []
+        providerVersion: V1
+        permissions: {}
+        address: "{{ docker_regs[items].address }}"
+  {% if docker_regs[items].provider == "aws" %}
+      username: AWS
+        passwordCommand: aws --region us-east-1 ecr get-authorization-token --output
+          text --query 'authorizationData[].authorizationToken' | base64 -d | sed
+          's/^AWS://'
+  {% else %}
+      username: {{ docker_regs[items].username }}
+        password: {{ docker_regs[items].password }}
+  {% endif %}
+      email: fake.email@spinnaker.io
+        cacheIntervalSeconds: 30
+        clientTimeoutMillis: 60000
+        cacheThreads: 1
+        paginateSize: 100
+        sortTagsByDate: false
+        trackDigests: false
+        insecureRegistry: false
+        repositories: []
+  {% endfor %}
+      primaryAccount: example
+    google:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: gce.json
+        baseImages: []
+        zone: us-central1-f
+        network: default
+        useInternalIp: false
+      kubernetes:
+        enabled: {{ enable_kubernetes }}
+        accounts:
+  {% for items in kubernetes %}
+      - name: {{ kubernetes[items].name }}
+          requiredGroupMembership: []
+          providerVersion: {{ kubernetes[items].providerVersion }}
+          permissions: {}
+          dockerRegistries:
+          - accountName: {{ kubernetes[items].default_docker_reg }}
+            namespaces: []
+          context: {{ kubernetes[items].context }}
+          configureImagePullSecrets: {{ kubernetes[items].configureImagePullSecrets }}
+          cacheThreads: 1
+          namespaces: []
+          omitNamespaces: []
+          kinds: []
+          omitKinds: []
+          customResources: []
+          cachingPolicies: []
+          kubeconfigFile: {{ kubernetes[items].kubeconfigFile }}
+          oAuthScopes: []
+          onlySpinnakerManaged: false
+  {% endfor %}
+      primaryAccount: natdev
+    oracle:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: oci.json
+        baseImages: []
+    cloudfoundry:
+      enabled: false
+      accounts: []
+  deploymentEnvironment:
+    size: SMALL
+    type: LocalDebian
+    imageVariant: SLIM
+    updateVersions: true
+    consul:
+      enabled: false
+    vault:
+      enabled: false
+    customSizing: {}
+    sidecars: {}
+    initContainers: {}
+    hostAliases: {}
+    affinity: {}
+    tolerations: {}
+    nodeSelectors: {}
+    gitConfig:
+      upstreamUser: spinnaker
+    livenessProbeConfig:
+      enabled: false
+    haServices:
+      clouddriver:
+        enabled: false
+        disableClouddriverRoDeck: false
+      echo:
+        enabled: false
+  persistentStorage:
+    persistentStoreType: s3
+    azs: {}
+    gcs:
+      rootFolder: front50
+    redis: {}
+    s3:
+      bucket: {{ s3_bucket_name}}
+      rootFolder: {{ root_folder }}
+      region: {{ region }}
+      pathStyleAccess: false
+      accessKeyId: {{ access_key }}
+      secretAccessKey: {{ secret_key }}
+    oracle: {}
+  features:
+    auth: false
+    fiat: false
+    chaos: false
+    entityTags: false
+    artifacts: true
+  metricStores:
+    datadog:
+      enabled: false
+      tags: []
+    prometheus:
+      enabled: false
+      add_source_metalabels: true
+    stackdriver:
+      enabled: false
+    newrelic:
+      enabled: false
+      tags: []
+    period: 30
+    enabled: false
+  notifications:
+    slack:
+      enabled: false
+    twilio:
+      enabled: false
+      baseUrl: https://api.twilio.com/
+    github-status:
+      enabled: false
+  timezone: America/Los_Angeles
+  ci:
+    jenkins:
+      enabled: false
+      masters: []
+    travis:
+      enabled: false
+      masters: []
+    wercker:
+      enabled: false
+      masters: []
+    concourse:
+      enabled: false
+      masters: []
+    gcb:
+      enabled: false
+      accounts: []
+  repository:
+    artifactory:
+      enabled: false
+      searches: []
+  security:
+    apiSecurity:
+      ssl:
+        enabled: false
+    uiSecurity:
+      ssl:
+        enabled: false
+    authn:
+      oauth2:
+        enabled: false
+        client: {}
+        resource: {}
+        userInfoMapping: {}
+      saml:
+        enabled: false
+        userAttributeMapping: {}
+      ldap:
+        enabled: false
+      x509:
+        enabled: false
+      iap:
+        enabled: false
+      enabled: false
+    authz:
+      groupMembership:
+        service: EXTERNAL
+        google:
+          roleProviderType: GOOGLE
+        github:
+          roleProviderType: GITHUB
+        file:
+          roleProviderType: FILE
+        ldap:
+          roleProviderType: LDAP
+      enabled: false
+  artifacts:
+    bitbucket:
+      enabled: false
+      accounts: []
+    gcs:
+      enabled: false
+      accounts: []
+    oracle:
+      enabled: false
+      accounts: []
+    github:
+      enabled: false
+      accounts: []
+    gitlab:
+      enabled: false
+      accounts: []
+    http:
+      enabled: false
+      accounts: []
+    helm:
+      enabled: false
+      accounts: []
+    s3:
+      enabled: false
+      accounts: []
+    maven:
+      enabled: false
+      accounts: []
+    templates: []
+  pubsub:
+    enabled: false
+    google:
+      enabled: false
+      pubsubType: GOOGLE
+      subscriptions: []
+      publishers: []
+  canary:
+    enabled: false
+    serviceIntegrations:
+    - name: google
+      enabled: false
+      accounts: []
+      gcsEnabled: false
+      stackdriverEnabled: false
+    - name: prometheus
+      enabled: false
+      accounts: []
+    - name: datadog
+      enabled: false
+      accounts: []
+    - name: signalfx
+      enabled: false
+      accounts: []
+    - name: aws
+      enabled: false
+      accounts: []
+      s3Enabled: false
+    - name: newrelic
+      enabled: false
+      accounts: []
+    reduxLoggerEnabled: true
+    defaultJudge: NetflixACAJudge-v1.0
+    stagesEnabled: true
+    templatesEnabled: true
+    showAllConfigsEnabled: true
+  plugins:
+    plugins: []
+    enabled: false
+    downloadingEnabled: false
+    pluginConfigurations:
+      plugins: {}
+  webhook:
+    trust:
+      enabled: false
+  telemetry:
+    enabled: false
+    endpoint: https://stats.spinnaker.io
+    instanceId: 01DRZQPDDXVVFDZ0JFXHB60RFF
+    connectionTimeoutMillis: 3000
+    readTimeoutMillis: 5000

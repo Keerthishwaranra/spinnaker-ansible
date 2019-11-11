@@ -1,0 +1,27 @@
+s3_bucket_name: "spinnaker_bucket"
+root_folder: "front50"
+region : "us-west-2"
+access_key: ""
+secret_key: ""
+enable_docker_reg: true
+docker_regs: 
+    one:
+        provider: "aws"
+        name: "example"
+        address: "https://806860399886.dkr.ecr.us-east-1.amazonaws.com"
+    two:
+        provider: "docker"
+        name: "docker-reg"
+        address: "index.docker.io"
+        username: "example"
+        password: "p@ssw0rd"
+
+enable_kubernetes: true
+kubernetes:
+    one:
+        name: example
+        providerVersion: "V2"
+        default_docker_reg: "example"
+        context: example
+        configureImagePullSecrets: "true"
+        kubeconfigFile: "/home/ubuntu/.kube/config"

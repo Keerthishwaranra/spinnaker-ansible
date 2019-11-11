@@ -27,3 +27,11 @@ ok: [192.168.33.100]
 
 
 ```
+
+### Action Items
+
+- [x] Installing common package like kubectl, aws cli others
+- [ ] Configuring Kubernetes hal configs
+- [x] Configuring Docker Reg in hal configs
+- [ ] Alerts and Notifications
+- [ ] Setting up Authn and Authz
